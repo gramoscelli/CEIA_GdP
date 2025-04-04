@@ -1,0 +1,32 @@
+# Archivos auxiliares de LaTeX
+*.aux
+*.log
+*.out
+*.toc
+*.lof
+*.lot
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+*.synctex(busy)
+*.synctex.gz(busy)
+*.bbl
+*.blg
+*.dvi
+
+# Archivos producidos por Beamer
+*.nav
+*.snm
+
+# Archivos producidos por PDFLaTeX, XeLaTeX, LuaLaTeX, etc.
+*.pdf
+*.xdv
+
+# Archivos temporales de editores
+*~
+*.swp
+*.swo
+
+# Archivos del sistema (Mac, Windows)
+.DS_Store
+Thumbs.db
