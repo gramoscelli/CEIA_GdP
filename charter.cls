@@ -1,4 +1,4 @@
-\def\filename{ProyectoVpC.cls}
+\def\filename{charter.cls}
 \def\fileversion{v. 0.1.0}
 \def\filedate{junio 1, 2020}
 \def\contributors{Patricio Bos}
@@ -14,7 +14,7 @@
 
 \newbool{codirector}
 
-\ProvidesClass{ProyectoVpC}
+\ProvidesClass{charter}
 \DeclareOption*{\PassOptionsToPackage{\CurrentOption}{color}}%
 \DeclareOption*{\PassOptionsToClass{\CurrentOption}{article}}%
 \ExecuteOptions{12pt}% execute default options

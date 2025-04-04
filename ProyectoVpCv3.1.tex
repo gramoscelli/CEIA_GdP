@@ -1,0 +1,946 @@
+\documentclass[
+11pt, % The default document font size, options: 10pt, 11pt, 12pt
+%codirector, % Uncomment to add a codirector to the title page
+]{ProyectoVpC} 
+
+\usepackage{enumitem}
+\usepackage{booktabs}
+\usepackage{lscape} % o pdflscape
+
+% El títulos de la memoria, se usa en la carátula y se puede usar el cualquier lugar del documento con el comando \ttitle
+\titulo{Sistema de visión por computadora para la caracterización de la altura del pasto en vías de tren}
+
+% Nombre del posgrado, se usa en la carátula y se puede usar el cualquier lugar del documento con el comando \degreename
+\posgrado{Carrera de Especialización en Inteligencia Artificial} 
+%\posgrado{Carrera de Especialización en Internet de las Cosas} 
+%\posgrado{Carrera de Especialización en Inteligencia Artificial}
+%\posgrado{Maestría en Sistemas Embebidos} 
+%\posgrado{Maestría en Internet de las cosas}
+
+% Tu nombre, se puede usar el cualquier lugar del documento con el comando \authorname
+% IMPORTANTE: no omitir titulaciones ni tildación en los nombres, también se recomienda escribir los nombres completos (tal cual los tienen en su documento)
+\autor{Ing. Gustavo Ramoscelli}
+
+% El nombre del director y co-director, se puede usar el cualquier lugar del documento con el comando \supname y \cosupname y \pertesupname y \pertecosupname
+\director{Ing. Ariel Lutenberg}
+\pertenenciaDirector{FIUBA} 
+\codirector{} % para que aparezca en la portada se debe descomentar la opción codirector en los parámetros de documentclass
+\pertenenciaCoDirector{FIUBA}
+
+% Nombre del cliente, quien va a aprobar los resultados del proyecto, se puede usar con el comando \clientename y \empclientename
+\cliente{Ing. Martín Harris}
+\empresaCliente{Trenes Argentions S.A.}
+ 
+\fechaINICIO{4 de marzo de 2025}		%Fecha de inicio de la cursada de GdP \fechaInicioName
+\fechaFINALPlan{22 de abril de 2025} 	%Fecha de final de cursada de GdP
+\fechaFINALTrabajo{TBD}	%Fecha de defensa pública del trabajo final
+
+
+\begin{document}
+
+\maketitle
+\thispagestyle{empty}
+\pagebreak
+
+
+\thispagestyle{empty}
+{\setlength{\parskip}{0pt}
+\tableofcontents{}
+}
+\pagebreak
+
+
+\section*{Registros de cambios}
+\label{sec:registro}
+
+
+\begin{table}[ht]
+\label{tab:registro}
+\centering
+\begin{tabularx}{\linewidth}{@{}|c|X|c|@{}}
+\hline
+\rowcolor[HTML]{C0C0C0} 
+Revisión & \multicolumn{1}{c|}{\cellcolor[HTML]{C0C0C0}Detalles de los cambios realizados} & Fecha      \\ \hline
+0      & Creación del documento                                 &\fechaInicioName \\ \hline
+1      & Se completa hasta el punto 5 inclusive                & 21 de marzo de 2025 \\ \hline
+2      & Se completa hasta el punto 8 inclusive                & 28 de marzo de 2025 \\ \hline 
+3      & Se completa hasta el punto 12 inclusive                & 4 de abril de 2025 \\ \hline 
+%		  Se puede agregar algo más \newline
+%		  En distintas líneas \newline
+%		  Así                                                    & {día} de {mes} de 202X \\ \hline
+%3      & Se completa hasta el punto 12 inclusive                & {día} de {mes} de 202X \\ \hline
+%4      & Se completa el plan	                                 & {día} de {mes} de 202X \\ \hline
+
+% Si hay más correcciones pasada la versión 4 también se deben especificar acá
+
+\end{tabularx}
+\end{table}
+
+\pagebreak
+
+
+
+\section*{Acta de constitución del proyecto}
+\label{sec:acta}
+
+\begin{flushright}
+Buenos Aires, \fechaInicioName
+\end{flushright}
+
+\vspace{2cm}
+
+Por medio de la presente se acuerda con el \authorname\hspace{1px} que su Trabajo Final de la \degreename\hspace{1px} se titulará ``\ttitle'' y consistirá en la implementación de un prototipo de un sistema de visión por computadora que genere información sobre la altura del pasto a ambos lados de las vías por donde circule una formación de tren. El trabajo tendrá un presupuesto preliminar estimado de 600 horas y un costo estimado de \$ 100.000, con fecha de inicio el \fechaInicioName\hspace{1px} y fecha de presentación pública el \fechaFinalName.
+
+Se adjunta a esta acta la planificación inicial.
+
+\vfill
+
+% Esta parte se construye sola con la información que hayan cargado en el preámbulo del documento y no debe modificarla
+\begin{table}[ht]
+\centering
+\begin{tabular}{ccc}
+\begin{tabular}[c]{@{}c@{}}Dr. Ing. Ariel Lutenberg \\ Director posgrado FIUBA\end{tabular} & \hspace{2cm} & \begin{tabular}[c]{@{}c@{}}\clientename \\ \empclientename \end{tabular} \vspace{2.5cm} \\ 
+\multicolumn{3}{c}{\begin{tabular}[c]{@{}c@{}} \supname \\ Director del Trabajo Final\end{tabular}} \vspace{2.5cm} \\
+\end{tabular}
+\end{table}
+
+
+
+
+\section{1. Descripción técnica-conceptual del proyecto a realizar}
+\label{sec:descripcion}
+
+\subsection{Introducción y contexto}
+\label{sec:descripcion}
+El mantenimiento de la vegetación en los alrededores de las vías férreas es fundamental para garantizar la seguridad y eficiencia del transporte ferroviario. La presencia de pasto alto puede afectar la visibilidad de los maquinistas, deteriorar la infraestructura y aumentar el riesgo de incendios, especialmente en temporadas secas. Actualmente, la inspección y mantenimiento de la vegetación son tareas costosas que requieren personal capacitado y revisiones periódicas, muchas de ellas realizadas manualmente.
+
+En este contexto, el presente proyecto propone una solución innovadora basada en inteligencia artificial (IA) y visión por computadora para automatizar el monitoreo del crecimiento de la vegetación en las vías de tren. A través de una cámara instalada en la parte frontal de una locomotora y un sistema de procesamiento de imágenes en tiempo real, se busca estimar y modelar la altura del pasto, proporcionando datos clave para la planificación del mantenimiento.
+
+\subsection{Estado del arte y propuesta de valor}
+Actualmente, las metodologías empleadas para la inspección de vegetación en el ámbito ferroviario se realizan inspecciones visuales. Esta forma de trabajo presenta limitaciones en términos de costos y accesibilidad. El uso de visión por computadora y técnicas de aprendizaje de máquina representará un avance significativo al bajar los costos que insumen las inspecciones periódicas de los trabajadores.
+
+La propuesta de valor del sistema radica en su capacidad para operar en tiempo real, facilitando la detección y medición precisa del crecimiento del pasto sin interrumpir las operaciones ferroviarias. Este enfoque no solo optimiza la planificación de mantenimiento, sino que también reduce costos y minimiza riesgos operativos.
+
+\subsection{Problema y solución propuesta}
+El problema central que aborda este proyecto es la falta de un sistema automatizado y eficiente para el monitoreo del crecimiento del pasto en las vías ferroviarias. Actualmente, las inspecciones manuales y los mantenimientos programados pueden ser ineficientes, generando gastos innecesarios y riesgos para la infraestructura.
+
+La solución consiste en un sistema basado en IA que emplea aprendizaje de máquina para segmentar imágenes de video y predecir la altura del pasto en tiempo real. La información generada servirá como insumo para la toma de decisiones sobre el mantenimiento de la vegetación, optimizando la asignación de recursos y mejorando la seguridad operativa.
+
+\subsection{Descripción funcional y diagrama en bloques}
+El sistema se compone de los siguientes módulos principales:
+
+\begin{itemize}
+\item{\bf Captura de Video:} Una cámara montada en la locomotora captura imágenes del entorno en diversas condiciones climáticas y de iluminación.
+
+\item{\bf Procesamiento de Imágenes:} Se aplica segmentación basada en color y modelos de redes neuronales para identificar la vegetación.
+
+\item{\bf Estimación de Altura:} La red neuronal entrenada analiza las imágenes y calcula la altura del pasto en cada sección de la vía.
+
+\item{\bf Almacenamiento y Visualización:} Los datos generados se almacenan en una base de datos para su consulta y análisis.
+\end{itemize}
+A continuación, se presenta un diagrama en bloques del sistema:
+
+\begin{figure}[htpb]
+\centering 
+\includegraphics[width=.65\textwidth]{./Figuras/diagBloques.png}
+\caption{Diagrama en bloques del sistema.}
+\label{fig:diagBloques}
+\end{figure}
+\vspace{25px}
+
+\subsection{Impacto y futuras aplicaciones}
+Este proyecto tiene el potencial de mejorar el mantenimiento ferroviario al proporcionar un método preciso, eficiente y escalable para el monitoreo de la vegetación. En el futuro, el sistema podría integrarse con tecnologías adicionales, como sensores LiDAR que permitirán el sensado nocturno. Asimismo, su implementación en múltiples locomotoras permitiría una cobertura extensiva y una planificación de mantenimiento basada en datos en tiempo real.
+
+\section{2. Identificación y análisis de los interesados}
+\label{sec:interesados}
+
+\begin{table}[ht]
+%\caption{Identificación de los interesados}
+%\label{tab:interesados}
+\begin{tabularx}{\linewidth}{@{}|l|X|X|l|@{}}
+\hline
+\rowcolor[HTML]{C0C0C0} 
+Rol           & Nombre y Apellido & Organización 	& Puesto 	\\ \hline
+Auspiciante   & \clientename                  &  \empclientename            &        	\\ \hline
+Cliente       & \clientename      &\empclientename	&        	\\ \hline
+%Impulsor      &                   &              	&        	\\ %\hline
+Responsable   & \authorname       & FIUBA        	& Alumno 	\\ \hline
+%Colaboradores &                   &              	&        	\\ %\hline
+Orientador    & \supname	      & \pertesupname 	& Director del Trabajo Final \\ \hline
+%Equipo        & miembro1 \newline 
+%				miembro2          &              	&        	\\ %\hline
+%Opositores    &                   &              	&        	\\ %\hline
+Usuario final & Sistemas de Mantenimiento                 & \empclientename   &        	\\ \hline
+\end{tabularx}
+\end{table}
+
+\begin{itemize}
+	\item Orientador: El/la \supname \ es experto/a en sistemas de visión por computadora y me asistirá en la parte de implementación y entrenamiento del modelo de redes neuronales artificiales.
+	\item Auspiciante: es riguroso y exigente con la rendición de gastos. Prestar mucha atención a esto.
+\end{itemize}
+
+\section{3. Propósito del proyecto}
+\label{sec:proposito}
+
+Optimizar el monitoreo y gestión de la vegetación en vías de tren mediante un sistema automatizado de visión por computadora que permita estimar la altura del pasto en tiempo real. La solución busca mejorar la seguridad operativa, reducir costos asociados a la supervisión manual y facilitar la toma de decisiones en el mantenimiento ferroviario, proporcionando información precisa y accesible para optimizar la planificación de intervenciones.
+
+\section{4. Alcance del proyecto}
+\label{sec:alcance}
+
+El proyecto incluye:
+\begin{itemize}
+\item Captura de datos mediante la instalación de una cámara en la parte frontal de una locomotora para registrar videos en diferentes condiciones climáticas y de iluminación.
+\item Procesamiento de imágenes aplicando técnicas de segmentación para identificar la vegetación en los alrededores de las vías.
+\item Entrenamiento de un modelo de inteligencia artificial basado en redes neuronales para estimar la altura del pasto a partir de las imágenes capturadas.
+\item Validación del sistema en entornos controlados y pruebas en campo para evaluar su precisión y desempeño bajo distintas condiciones.
+\item Análisis de factibilidad de procesamiento en tiempo real utilizando hardware especializado como GPU o dispositivos embebidos.
+\item Desarrollo de un prototipo funcional, que permitirá demostrar la viabilidad del sistema y su potencial implementación en el sector ferroviario.
+
+\end{itemize}
+El proyecto no incluye:
+\begin{itemize}
+\item Implementación a gran escala en múltiples locomotoras o redes ferroviarias.
+\item Integración con sensores adicionales como LiDAR o GPS, aunque se plantea como una posible extensión futura.
+\item Desarrollo de una plataforma de monitoreo centralizada para la gestión de datos a nivel operativo.
+\item El alcance del proyecto se limita al diseño, desarrollo y validación de un sistema experimental, proporcionando las bases para futuras mejoras e implementación en escenarios reales.
+\end{itemize}
+
+\section{5. Supuestos del proyecto}
+\label{sec:supuestos}
+Para el desarrollo del presente proyecto se supone que:
+\begin{itemize}
+\item Se contará con acceso a una locomotora de pruebas para la instalación de la cámara y la recolección de datos en distintas condiciones climáticas.
+\item La capacidad de procesamiento de los equipos utilizados será suficiente para ejecutar modelos de visión por computadora en tiempo real o con una latencia aceptable.
+\item Se dispondrá de un conjunto de datos representativo para entrenar y validar la red neuronal, con ejemplos en diversas condiciones de iluminación y tipos de vegetación.
+\item No habrá restricciones regulatorias o normativas que impidan la instalación de equipos en la locomotora durante la fase experimental.
+\item Se contará con el apoyo de personal técnico para la instalación y configuración de hardware y software necesarios para la prueba del sistema.
+\item Los costos de adquisición de hardware y almacenamiento de datos serán viables dentro del presupuesto del proyecto.
+\item No se prevén cambios significativos en las condiciones de operación ferroviaria que afecten el desarrollo del sistema durante la ejecución del proyecto.
+\end{itemize}
+
+\section{6. Product Backlog}
+\label{sec:backlog}
+
+El siguiente Product Backlog se organiza en cuatro épicas principales, cada una con sus historias de usuario (HU). A cada historia se le asigna una prioridad (Alta, Media o Baja), si es opcional y una estimación en Story Points (SP), calculada según dificultad, complejidad e incertidumbre. Se adopta la serie de Fibonacci para redondear el total.
+
+\begin{itemize}
+  \item \textbf{\'{E}pica 1: Captura y gestión de datos}
+    \begin{itemize}
+      \item \textbf{HU1:} 
+      \emph{Como personal de mantenimiento, quiero instalar y configurar la cámara en la locomotora para capturar imágenes en diferentes condiciones.}
+        \begin{itemize}[label=$\cdot$]
+          \item Dificultad: 3
+          \item Complejidad: 3
+          \item Incertidumbre: 2
+          \item Suma: 8 $\rightarrow$ \textbf{Story Points: 8}
+          \item Prioridad: Alta
+          \item Opcional: No
+        \end{itemize}
+
+      \item \textbf{HU2:} 
+      \emph{Como analista de datos, quiero almacenar y organizar las imágenes en un repositorio central para su posterior procesamiento.}
+        \begin{itemize}[label=$\cdot$]
+          \item Dificultad: 3
+          \item Complejidad: 4
+          \item Incertidumbre: 3
+          \item Suma: 10 $\rightarrow$ \textbf{Story Points: 13}
+          \item Prioridad: Alta
+          \item Opcional: No
+        \end{itemize}
+    \end{itemize}
+
+  \item \textbf{\'{E}pica 2: Entrenamiento y validación del modelo de IA}
+    \begin{itemize}
+      \item \textbf{HU3:}
+      \emph{Como ingeniero de software embebido, quiero entrenar un modelo de redes neuronales para estimar la altura del pasto con precisión.}
+        \begin{itemize}[label=$\cdot$]
+          \item Dificultad: 5
+          \item Complejidad: 5
+          \item Incertidumbre: 3
+          \item Suma: 13 $\rightarrow$ \textbf{Story Points: 13}
+          \item Prioridad: Alta
+          \item Opcional: No
+        \end{itemize}
+
+      \item \textbf{HU4:}
+      \emph{Como responsable de calidad, quiero validar el modelo en pruebas de campo para asegurar un desempeño confiable.}
+        \begin{itemize}[label=$\cdot$]
+          \item Dificultad: 4
+          \item Complejidad: 4
+          \item Incertidumbre: 3
+          \item Suma: 11 $\rightarrow$ \textbf{Story Points: 13}
+          \item Prioridad: Media
+          \item Opcional: No
+        \end{itemize}
+    \end{itemize}
+
+  \item \textbf{\'{E}pica 3: Visualización de información y alertas}
+    \begin{itemize}
+      \item \textbf{HU5:}
+      \emph{Como personal de mantenimiento, quiero ver en tiempo real la estimación de la altura del pasto para planificar intervenciones.}
+        \begin{itemize}[label=$\cdot$]
+          \item Dificultad: 3
+          \item Complejidad: 3
+          \item Incertidumbre: 3
+          \item Suma: 9 $\rightarrow$ \textbf{Story Points: 13}
+          \item Prioridad: Alta
+          \item Opcional: No
+        \end{itemize}
+
+      \item \textbf{HU6:}
+      \emph{Como jefe de operaciones, quiero recibir alertas automáticas cuando el pasto supere un umbral crítico para coordinar acciones preventivas.}
+        \begin{itemize}[label=$\cdot$]
+          \item Dificultad: 3
+          \item Complejidad: 2
+          \item Incertidumbre: 3
+          \item Suma: 8 $\rightarrow$ \textbf{Story Points: 8}
+          \item Prioridad: Alta
+          \item Opcional: No
+        \end{itemize}
+    \end{itemize}
+
+  \item \textbf{\'{E}pica 4: Gestión de acceso y confiabilidad del sistema}
+    \begin{itemize}
+      \item \textbf{HU7:}
+      \emph{Como administrador del sistema, quiero gestionar los permisos de cada usuario para asegurar la confidencialidad de los datos.}
+        \begin{itemize}[label=$\cdot$]
+          \item Dificultad: 3
+          \item Complejidad: 2
+          \item Incertidumbre: 2
+          \item Suma: 7 $\rightarrow$ \textbf{Story Points: 8}
+          \item Prioridad: Media
+          \item Opcional: No
+        \end{itemize}
+
+      \item \textbf{HU8:}
+      \emph{Como auditor externo, quiero acceder a un historial de modificaciones y accesos para cumplir con la normativa y asegurar trazabilidad.}
+        \begin{itemize}[label=$\cdot$]
+          \item Dificultad: 3
+          \item Complejidad: 3
+          \item Incertidumbre: 3
+          \item Suma: 9 $\rightarrow$ \textbf{Story Points: 13}
+          \item Prioridad: Media
+          \item Opcional: Sí
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+
+
+\section{7. Criterios de aceptación de historias de usuario}
+\label{sec:criteriosAceptacion}
+
+\begin{itemize}
+  % ÉPICA 1
+  \item \textbf{\'{E}pica 1: Captura y gestión de datos}
+    \begin{itemize}
+      \item \textbf{Criterios de aceptación HU1 (Instalar y configurar la cámara)}
+        \begin{itemize}
+          \item La cámara graba video continuo bajo condiciones diurnas, nocturnas y de clima adverso sin interrupciones.
+          \item La tasa de captura (FPS) cumple el mínimo de 30\,FPS.
+          \item Se validan la transmisión y el almacenamiento de video en el repositorio central sin pérdida de datos.
+        \end{itemize}
+
+      \item \textbf{Criterios de aceptación HU2 (Almacenar y organizar las imágenes)}
+        \begin{itemize}
+          \item Cada imagen se registra con metadatos (fecha, hora, posible ubicación) y se puede buscar en menos de 5\,segundos.
+          \item Se verifica la integridad de los archivos (por ejemplo, usando checksums).
+          \item El sistema maneja volúmenes de datos de al menos 1.000 imágenes/día sin fallas.
+        \end{itemize}
+    \end{itemize}
+
+  % ÉPICA 2
+  \item \textbf{\'{E}pica 2: Entrenamiento y validación del modelo de IA}
+    \begin{itemize}
+      \item \textbf{Criterios de aceptación HU3 (Entrenar el modelo de redes neuronales)}
+        \begin{itemize}
+          \item El modelo se entrena con más de 1.000 muestras y alcanza al menos un 85\% de exactitud (\emph{accuracy}) en pruebas internas.
+          \item El proceso de entrenamiento no supera 2\,horas con la infraestructura disponible.
+          \item Se generan logs y gráficas de la evolución del entrenamiento (\emph{loss}, \emph{accuracy}).
+          \item El conjunto de datos de entrenamiento incluye ejemplos con distintas condiciones de iluminación (mañana, mediodía, tarde).
+          \item Se documentan los hiperparámetros más relevantes (tasa de aprendizaje, número de épocas, tamaño de lote, etc.) para replicar el proceso.
+        \end{itemize}
+
+      \item \textbf{Criterios de aceptación HU4 (Validar el modelo en pruebas de campo)}
+        \begin{itemize}
+          \item El error promedio en la estimación de altura no supera $\pm10\%$ frente a mediciones manuales.
+          \item Se comprueba un rendimiento estable ($\pm5\%$) en condiciones de iluminación variadas (mañana, mediodía, tarde).
+          \item El sistema produce un informe comparativo con resultados y conclusiones de la validación.
+        \end{itemize}
+    \end{itemize}
+
+  % ÉPICA 3
+  \item \textbf{\'{E}pica 3: Visualización de información y alertas}
+    \begin{itemize}
+      \item \textbf{Criterios de aceptación HU5 (Visualizar en tiempo real la estimación de la altura)}
+        \begin{itemize}
+          \item El panel (dashboard) se actualiza cada minuto con la altura promedio estimada por tramo.
+          \item La interfaz es intuitiva y no requiere más de 2 clics para llegar a la vista detallada de cada tramo.
+          \item Se permite exportar los datos en formato PDF, con fecha/hora y alturas estimadas.
+        \end{itemize}
+
+      \item \textbf{Criterios de aceptación HU6 (Recibir alertas automáticas)}
+        \begin{itemize}
+          \item El usuario configura el umbral (en cm) y el sistema dispara una alerta visual y sonora al superarlo.
+          \item Se envía un correo electrónico a los roles de “Jefe de Operaciones” cuando haya 5 tramos consecutivos con altura mayor al umbral.
+          \item Se registra un log con fecha, hora y coordenadas aproximadas de cada alerta.
+          \item Las alertas pueden configurarse para diferentes umbrales según el tipo de vía (urbana, rural, etc.).
+        \end{itemize}
+    \end{itemize}
+
+  % ÉPICA 4
+  \item \textbf{\'{E}pica 4: Gestión de acceso y confiabilidad del sistema}
+    \begin{itemize}
+      \item \textbf{Criterios de aceptación HU7 (Gestionar permisos de usuarios)}
+        \begin{itemize}
+          \item Existen roles (administrador, analista, mantenimiento, auditor) con privilegios claramente diferenciados.
+          \item El acceso requiere usuario y contraseña, con posibilidad de habilitar doble factor de autenticación.
+          \item Se registra en bitácora cada evento de creación o modificación de usuarios y roles.
+        \end{itemize}
+
+      \item \textbf{Criterios de aceptación HU8 (Historial de modificaciones y accesos)}
+        \begin{itemize}
+          \item Se registra en un historial inalterable (fecha, hora, usuario y cambio realizado).
+          \item El filtrado por usuario, fecha y tipo de cambio no supera 5\,segundos de tiempo de respuesta.
+          \item La exportación de registros se hace en CSV o PDF, conservando toda la trazabilidad.
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+
+\section{8. Fases de CRISP-DM}
+
+\subsection{Comprensión del negocio}
+\begin{itemize}
+  \item \textbf{Objetivo:} Desarrollar un sistema de visión por computadora capaz de estimar la altura del pasto en los alrededores de las vías, reduciendo así la necesidad de inspecciones manuales y optimizando los costos y tiempos de mantenimiento.
+  \item \textbf{Impacto esperado:} 
+    \begin{itemize}
+      \item Mejorar la seguridad operacional ferroviaria al prevenir que la vegetación alta obstruya la visibilidad o dañe la infraestructura.
+      \item Optimizar recursos de mantenimiento, evitando inspecciones excesivas o tardías.
+      \item Reducir costos relacionados con trabajos manuales y riesgos en campo.
+    \end{itemize}
+  \item \textbf{Métricas de éxito:} 
+    \begin{itemize}
+      \item Margen de error en la estimación de altura no mayor a un $\pm10\%$ frente a mediciones manuales de referencia.
+      \item Tasa de cobertura de vías escaneadas (porcentaje de vía supervisada).
+      \item Aumento en la eficiencia de planificación de corte o poda (reducción del número de inspecciones manuales realizadas).
+    \end{itemize}
+\end{itemize}
+
+\subsection{Comprensión de los datos}
+\begin{itemize}
+  \item \textbf{Tipo de datos:} 
+    \begin{itemize}
+      \item Imágenes y/o video capturados desde una cámara frontal instalada en la locomotora.
+      \item Posible información de telemetría asociada (fecha, hora, ubicación aproximada).
+    \end{itemize}
+  \item \textbf{Origen y cantidad:} 
+    \begin{itemize}
+      \item Se estima recolectar datos de distintas rutas ferroviarias, pudiendo alcanzar 10\,000--20\,000 fotogramas (o más), abarcando diferentes condiciones de iluminación y clima.
+    \end{itemize}
+  \item \textbf{Calidad de los datos:}
+    \begin{itemize}
+      \item Variaciones en la iluminación (día, noche, nublado).
+      \item Potenciales oclusiones (objetos en el entorno).
+      \item Resolución de la cámara y estabilidad de la captura (vibraciones de la locomotora).
+    \end{itemize}
+\end{itemize}
+
+\subsection{Preparación de los datos}
+\begin{itemize}
+  \item \textbf{Selección y etiquetado:}
+    \begin{itemize}
+      \item Identificar fotogramas relevantes donde se visualice claramente la vegetación.
+      \item Etiquetar manualmente la altura del pasto en un subconjunto de imágenes para usarlas como \emph{ground truth}.
+    \end{itemize}
+  \item \textbf{Procesamiento y limpieza:}
+    \begin{itemize}
+      \item Conversión de formatos, recortes para centrar la zona de las vías.
+      \item Corrección de imágenes con baja iluminación o exceso de brillo.
+      \item Normalización de tamaños (por ejemplo, 720p o 1080p) para uniformar el dataset.
+    \end{itemize}
+  \item \textbf{Generación de \emph{features}:}
+    \begin{itemize}
+      \item Segmentación de la vegetación (técnicas de \emph{color thresholding} o redes neuronales especializadas).
+      \item Extracción de rasgos como textura, color o altura aproximada basada en la perspectiva de la imagen.
+    \end{itemize}
+\end{itemize}
+
+\subsection{Modelado}
+\begin{itemize}
+  \item \textbf{Tipo de problema:} 
+    \begin{itemize}
+      \item Estimación de una variable continua (altura del pasto en centímetros o rangos de altura).
+      \item Puede abordarse como un problema de regresión (redes neuronales convolucionales, \emph{CNN}, o modelos de visión por computadora).
+    \end{itemize}
+  \item \textbf{Algoritmos y modelos posibles:}
+    \begin{itemize}
+      \item Modelos de \emph{Deep Learning} (por ej. U-Net, FCN) para segmentar el pasto y estimar su altura.
+      \item Otras redes neuronales o métodos basados en \emph{transfer learning} (ej. ResNet, VGG).
+    \end{itemize}
+  \item \textbf{Herramientas:}
+    \begin{itemize}
+      \item Bibliotecas como OpenCV, TensorFlow o PyTorch.
+      \item Hardware GPU o dispositivos embebidos con aceleración (NVIDIA Jetson, Google Coral, etc.).
+    \end{itemize}
+\end{itemize}
+
+\subsection{Evaluación del modelo}
+\begin{itemize}
+  \item \textbf{Métricas de rendimiento:}
+    \begin{itemize}
+      \item Error medio absoluto (MAE) o Error cuadrático medio (MSE) en la estimación de la altura.
+      \item Exactitud (\emph{accuracy}) en rangos de altura (por ejemplo, si la altura es mayor a cierto umbral).
+    \end{itemize}
+  \item \textbf{Validación en campo:}
+    \begin{itemize}
+      \item Comparación de la altura estimada vs. mediciones manuales en distintos tramos de vía.
+      \item Pruebas en condiciones de iluminación variadas para garantizar robustez.
+    \end{itemize}
+  \item \textbf{Resultados esperados:}
+    \begin{itemize}
+      \item Margen de error aceptable (ej. $\pm 10\%$).
+      \item Informe de validación con estadísticas y gráficas comparativas.
+    \end{itemize}
+\end{itemize}
+
+\subsection{Despliegue del modelo (opcional)}
+\begin{itemize}
+  \item \textbf{Tipo de despliegue:} 
+    \begin{itemize}
+      \item Integración con el prototipo de la locomotora para un procesado casi en tiempo real.
+      \item Servidor local o nube (si se requiere procesar grandes volúmenes de imágenes fuera de la locomotora).
+    \end{itemize}
+  \item \textbf{Herramientas:} 
+    \begin{itemize}
+      \item Contenedores Docker para simplificar la instalación y el despliegue en diferentes equipos.
+      \item Monitoreo y mantenimiento del modelo con herramientas como MLflow (opcional según alcance).
+    \end{itemize}
+  \item \textbf{Consideraciones futuras:}
+    \begin{itemize}
+      \item Posible integración con sensores adicionales (LiDAR) para mejorar la medición nocturna.
+      \item Ampliación a múltiples locomotoras de la flota ferroviaria.
+    \end{itemize}
+\end{itemize}
+
+\section{9. Desglose del trabajo en tareas}
+En esta sección se presentan tanto las tareas no técnicas (planificación y documentación) como las tareas técnicas asociadas a cada Historia de Usuario (HU), de manera que el total sume 600 horas (aprox. 488 horas en tareas técnicas y 112 horas en tareas no técnicas).
+
+\subsection{Tareas No Técnicas (112 horas)}
+
+\begin{itemize}
+  \item \textbf{Tarea PG1: Definir alcance, Historias de Usuario y cronograma inicial.}
+    \begin{itemize}
+      \item Estimación: 16\,h
+      \item Prioridad: Alta
+    \end{itemize}
+
+  \item \textbf{Tarea PG2: Redactar informe de avance (borrador y revisión).}
+    \begin{itemize}
+      \item Estimación: 10\,h
+      \item Prioridad: Media
+    \end{itemize}
+
+  \item \textbf{Tarea PG3: Elaborar la memoria del trabajo final.}
+    \begin{itemize}
+      \item Estimación: 60\,h
+      \item Prioridad: Alta
+      \item Observación: Aunque se desarrolla en paralelo al resto, aquí se totalizan 60\,h.
+    \end{itemize}
+
+  \item \textbf{Tarea PG4: Preparar la defensa final (diapositivas, guion, ensayos).}
+    \begin{itemize}
+      \item Estimación: 20\,h
+      \item Prioridad: Media
+    \end{itemize}
+
+  \item \textbf{Tarea PG5: Reuniones de seguimiento y ajustes generales.}
+    \begin{itemize}
+      \item Estimación: 6\,h
+      \item Prioridad: Media
+    \end{itemize}
+\end{itemize}
+
+\vspace{0.8em}
+\noindent \textbf{Total horas no técnicas = 112\,h}
+\vspace{1em}
+
+\subsection{Tareas Técnicas por Historia de Usuario (488 horas)}
+
+\subsubsection*{HU1: “Instalar y configurar la cámara para capturar imágenes.” (Total 40\,h)}
+
+\begin{itemize}
+  \item Seleccionar cámara y especificaciones técnicas (lentes, resolución): 6\,h (Alta)
+  \item Proceso de compra/provisión de la cámara (encargos, trámites): 4\,h (Media)
+  \item Montaje físico y configuración de soporte mecánico: 8\,h (Alta)
+  \item Calibración en condiciones diurnas/nocturnas: 8\,h (Alta)
+  \item Pruebas de captura en distintos ambientes (lluvia, contraluz, etc.): 6\,h (Media)
+  \item Documentar configuración final: 8\,h (Media)
+\end{itemize}
+
+\subsubsection*{HU2: “Almacenar y organizar las imágenes en un repositorio.” (Total 30\,h)}
+
+\begin{itemize}
+  \item Diseñar estructura de repositorio/Base de Datos (metadatos, índices): 6\,h (Alta)
+  \item Implementar etiquetado y versionado de imágenes: 8\,h (Alta)
+  \item Checksums y búsquedas rápidas: 6\,h (Media)
+  \item Prueba de integridad con \textasciitilde1000 imágenes diarias: 6\,h (Alta)
+  \item Programar consultas avanzadas (filtros, fechas, tags): 4\,h (Media)
+\end{itemize}
+
+\subsubsection*{HU3: “Entrenar un modelo de redes neuronales para la estimación de (X).” (Total 104\,h)}
+
+\begin{itemize}
+  \item Organización y etiquetado del dataset (limpieza, normalización): 16\,h (Alta)
+  \item Data augmentation (rotaciones, recortes, iluminación): 12\,h (Alta)
+  \item Scripts para entrenar modelos de prueba (baseline): 20\,h (Alta)
+  \item Primera iteración de entrenamiento (registro de accuracy/loss): 20\,h (Alta)
+  \item Ajuste de hiperparámetros y reentrenamiento: 16\,h (Media)
+  \item Comparación con baseline (métricas precisión, recall, F1): 12\,h (Media)
+  \item Documentar experimentos y resultados parciales: 8\,h (Media)
+\end{itemize}
+
+\subsubsection*{HU4: “Validar el modelo con pruebas de campo.” (Total 50\,h)}
+
+\begin{itemize}
+  \item Planificar y coordinar recolección de datos en campo: 8\,h (Media)
+  \item Preparar equipo y calibraciones (2 días de campo): 8\,h (Media)
+  \item Realizar las pruebas en campo (filmación, mediciones manuales): 16\,h (Alta)
+  \item Analizar resultados de campo (comparar \(\pm\)10\,\%): 8\,h (Media)
+  \item Documentar conclusiones y ajustes finales: 10\,h (Media)
+\end{itemize}
+
+\subsubsection*{HU5: “Visualizar en tiempo real la estimación.” (Total 50\,h)}
+
+\begin{itemize}
+  \item Diseñar la interfaz (dashboard) y flujo de datos en tiempo real: 10\,h (Alta)
+  \item Implementar pipeline que conecte el modelo con el dashboard: 12\,h (Alta)
+  \item Manejo de concurrencia y pruebas de rendimiento: 10\,h (Media)
+  \item Exportación de datos (PDF, CSV) y documentación de uso: 6\,h (Alta)
+  \item Integrar georreferenciación o mapas (opcional): 6\,h (Baja)
+  \item Instruir usuarios y recopilar feedback: 6\,h (Media)
+\end{itemize}
+
+\subsubsection*{HU6: “Recibir alertas automáticas cuando (X) supere cierto umbral.” (Total 30\,h)}
+
+\begin{itemize}
+  \item Definir lógica de umbrales y configuración de alertas: 6\,h (Alta)
+  \item Implementar envío de notificaciones (email, push) y test: 8\,h (Alta)
+  \item Documentar y probar con escenarios simulados: 8\,h (Media)
+  \item Ajustar severidad de alertas según feedback: 8\,h (Media)
+\end{itemize}
+
+\subsubsection*{HU7: “Gestionar permisos y acceso de usuarios.” (Total 40\,h)}
+
+\begin{itemize}
+  \item Definir roles y privilegios (admin, analista, mantenimiento, auditor): 8\,h (Media)
+  \item Implementar gestión de usuarios (creación, edición, borrado) y doble factor: 10\,h (Alta)
+  \item Registro detallado de eventos de usuario en bitácora: 8\,h (Media)
+  \item Documentar y probar roles: 6\,h (Media)
+  \item Multi-tenant o grupos (opcional): 8\,h (Baja)
+\end{itemize}
+
+\subsubsection*{HU8: “Acceder a historial de modificaciones y accesos (auditoría).” (Total 40\,h)}
+
+\begin{itemize}
+  \item Definir esquema de BD para almacenar logs/eventos: 10\,h (Media)
+  \item Implementar filtros (usuario, fecha, tipo de evento) con búsquedas rápidas: 10\,h (Media)
+  \item Indexar y optimizar para respuesta \textless5\,s: 10\,h (Media)
+  \item Documentar y realizar pruebas finales: 6\,h (Media)
+  \item Exportar historial (CSV/PDF) (opcional): 4\,h (Baja)
+\end{itemize}
+
+\vspace{1em}
+\subsection{Integración y QA (70\,h)}
+\begin{itemize}
+  \item Configurar entorno \emph{end-to-end} (cámara $\rightarrow$ repositorio $\rightarrow$ modelo $\rightarrow$ dashboard $\rightarrow$ alertas $\rightarrow$ logs): 8\,h (Alta)
+  \item Desarrollar y ejecutar pruebas de integración global: 20\,h (Alta)
+  \item Depurar errores, resolver incompatibilidades, refinar rendimiento: 16\,h (Alta)
+  \item Documentar resultados de pruebas (informe final de QA): 10\,h (Media)
+  \item Recopilar retroalimentación (Beta) y mejoras finales: 16\,h (Media)
+\end{itemize}
+
+\paragraph{Total horas técnicas (HU1--HU8 + Integración):} 488\,h
+
+\vspace{1em}
+\subsection{Resumen General de Horas}
+\begin{itemize}
+  \item \textbf{Tareas no técnicas (PG1--PG5):} 112\,h
+  \item \textbf{Tareas técnicas (HU1--HU8 + Integración):} 488\,h
+\end{itemize}
+
+\noindent \textbf{Total global: 600 horas.}
+
+
+\section{10. Diagrama de Gantt}
+\label{sec:gantt}
+
+El diagrama de Gantt debe representar de forma visual y cronológica todas las tareas del proyecto, abarcando aproximadamente 600 horas totales, de las cuales entre 480 y 500 deben destinarse a tareas técnicas (desarrollo, pruebas, implementación) y entre 100 y 120 a tareas no técnicas (planificación, documentación, escritura de memoria y preparación de la defensa).
+
+\textbf{Consignas y recomendaciones:}
+\begin{itemize}
+  \item Incluir tanto tareas técnicas derivadas de las HU como tareas no técnicas generales del proyecto.
+  \item El eje vertical debe listar las tareas y el eje horizontal representar el tiempo en semanas o fechas.
+  \item Utilizar colores diferenciados para distinguir tareas técnicas y no técnicas.
+  \item Las tareas deben estar ordenadas cronológicamente y reflejar todo el ciclo del proyecto.
+  \item Iniciar con la planificación del proyecto (coincidente con el inicio de Gestión de Proyectos) y finalizar con la defensa, próxima a la fecha de cierre del trabajo.
+  \item Configurar el software para mostrar los códigos del desglose de tareas y los nombres junto a cada barra.
+  \item Asegurarse de que la fecha final coincida con la del Acta Constitutiva.
+  \item Evitar tareas genéricas o ambiguas y asegurar una secuencia lógica y realista.
+  \item Las fechas pueden ser aproximadas; ajustar el ancho del diagrama según el texto y el parámetro \texttt{x unit}. Para mejorar la apariencia del diagrama, es necesario ajustar este valor y, quizás, acortar los nombres de las tareas.
+\end{itemize}
+
+\textbf{Herramientas sugeridas:}
+\begin{itemize}
+  \item Planner, GanttProject, Trello + plugins\\
+  \url{https://blog.trello.com/es/diagrama-de-gantt-de-un-proyecto}
+  \item Creately (colaborativa online)\\
+  \url{https://creately.com/diagram/example/ieb3p3ml/LaTeX}
+  \item LaTeX con \texttt{pgfgantt}:\\
+  \url{http://ctan.dcc.uchile.cl/graphics/pgf/contrib/pgfgantt/pgfgantt.pdf}
+\end{itemize}
+
+Incluir una imagen legible del diagrama de Gantt. Si es muy ancho, presentar primero la tabla y luego el gráfico de barras.
+
+\section{11. Planificación de Sprints}
+
+La planificación de sprints permite organizar y distribuir las tareas de manera incremental, de modo que cada sprint entregue valor al proyecto y facilite el seguimiento. A continuación se presenta una tabla con los sprints planificados, sus tareas principales, la cantidad de horas estimadas y el responsable. Se han definido 10 sprints, cada uno aproximadamente de 2 semanas, procurando equilibrar la carga horaria de 600 horas totales (488 horas en tareas técnicas y 112 horas en tareas no técnicas).
+
+\begin{center}
+\begin{tabular}{|l|l|l|c|l|c|}
+\hline
+\textbf{Sprint} & \textbf{HU o} & \textbf{Tarea} & \textbf{Horas} & \textbf{Resp.} & \textbf{\%} \\
+\textbf{} & \textbf{Fase} & \textbf{} & \textbf{} & \textbf{} & \textbf{avance} \\
+\hline
+\multicolumn{6}{|c|}{\textbf{Sprint 0 (48 h aprox.) -- Planificación inicial y definiciones}} \\
+\hline
+0 & PG1 & Definir alcance, Historias de Usuario y cronograma & 16 & Alumno & 0\% \\
+0 & PG2 & Redactar informe de avance (borrador y revisión) & 10 & Alumno & 0\% \\
+0 & PG5 & Reuniones de seguimiento y ajustes generales & 6 & Alumno & 0\% \\
+0 & \textit{---} & Buffer o margen (p.ej. cierre tareas) & 16 & Alumno & 0\% \\
+\hline
+\multicolumn{6}{|c|}{\textbf{Sprint 1 (40 h aprox.) -- HU1: Captura de datos}} \\
+\hline
+1 & HU1 & Selección y compra de cámara (Tarea 1) & 6 & Alumno & 0\% \\
+1 & HU1 & Montaje, calibración y pruebas iniciales (Tarea 2) & 16 & Alumno & 0\% \\
+1 & HU1 & Configuración final y documentación (Tarea 3) & 8 & Alumno & 0\% \\
+1 & PG5 & Reuniones de seguimiento (complementarias) & 4 & Alumno & 0\% \\
+1 & \textit{---} & Ajustes / contingencia & 6 & Alumno & 0\% \\
+\hline
+\multicolumn{6}{|c|}{\textbf{Sprint 2 (30 h aprox.) -- HU2: Gestión de imágenes}} \\
+\hline
+2 & HU2 & Estructura de repositorio, etiquetado, checksums & 14 & Alumno & 0\% \\
+2 & HU2 & Pruebas de integridad y consultas (Tarea 2) & 10 & Alumno & 0\% \\
+2 & \textit{---} & Margen / reuniones & 6 & Alumno & 0\% \\
+\hline
+\multicolumn{6}{|c|}{\textbf{Sprint 3 (50 h aprox.) -- HU3: Entrenamiento de modelo (parte 1)}} \\
+\hline
+3 & HU3 & Preparación del dataset (limpieza, normalización) & 16 & Alumno & 0\% \\
+3 & HU3 & Data augmentation & 12 & Alumno & 0\% \\
+3 & HU3 & Script de entrenamiento inicial (baseline) & 10 & Alumno & 0\% \\
+3 & \textit{---} & Reuniones / contingencia & 12 & Alumno & 0\% \\
+\hline
+\multicolumn{6}{|c|}{\textbf{Sprint 4 (54 h aprox.) -- HU3: Entrenamiento de modelo (parte 2)}} \\
+\hline
+4 & HU3 & Entrenamiento principal y logs (Tarea 4) & 20 & Alumno & 0\% \\
+4 & HU3 & Ajuste de hiperparámetros y reentrenamiento & 16 & Alumno & 0\% \\
+4 & HU3 & Comparación con baseline y documentar & 12 & Alumno & 0\% \\
+4 & \textit{---} & Reuniones / contingencia & 6 & Alumno & 0\% \\
+\hline
+\multicolumn{6}{|c|}{\textbf{Sprint 5 (50 h aprox.) -- HU4: Validación en campo}} \\
+\hline
+5 & HU4 & Coordinar y realizar pruebas en campo & 24 & Alumno & 0\% \\
+5 & HU4 & Analizar resultados (+10/-10\%) & 8 & Alumno & 0\% \\
+5 & HU4 & Documentar conclusiones y reajustes & 10 & Alumno & 0\% \\
+5 & PG5 & Reuniones finales de campo & 4 & Alumno & 0\% \\
+5 & \textit{---} & Margen / contingencia & 4 & Alumno & 0\% \\
+\hline
+\end{tabular}
+
+\begin{tabular}{|l|l|l|c|l|c|}
+\hline
+\multicolumn{6}{|c|}{\textbf{Sprint 6 (50 h aprox.) -- HU5: Visualización en tiempo real}} \\
+\hline
+6 & HU5 & Diseñar interfaz (dashboard) & 10 & Alumno & 0\% \\
+6 & HU5 & Pipeline en tiempo real + pruebas de rendimiento & 12 & Alumno & 0\% \\
+6 & HU5 & Exportación de datos (PDF, CSV) & 6 & Alumno & 0\% \\
+6 & HU5 & Integración georreferenciación (opcional) & 6 & Alumno & 0\% \\
+6 & HU5 & Feedback usuarios / reuniones & 6 & Alumno & 0\% \\
+6 & \textit{---} & Margen & 10 & Alumno & 0\% \\
+\hline
+\multicolumn{6}{|c|}{\textbf{Sprint 7 (30 h aprox.) -- HU6: Alertas automáticas}} \\
+\hline
+7 & HU6 & Lógica de umbrales y config & 6 & Alumno & 0\% \\
+7 & HU6 & Notificaciones (email, push) y test & 8 & Alumno & 0\% \\
+7 & HU6 & Documentar y probar en escenarios simulados & 8 & Alumno & 0\% \\
+7 & HU6 & Ajustar severidad de alertas & 8 & Alumno & 0\% \\
+\hline
+\multicolumn{6}{|c|}{\textbf{Sprint 8 (40 h aprox.) -- HU7: Gestión de permisos}} \\
+\hline
+8 & HU7 & Definir roles y privilegios (admin, analista, etc.) & 8 & Alumno & 0\% \\
+8 & HU7 & Implementar gestión de usuarios y bitácora & 10 & Alumno & 0\% \\
+8 & HU7 & Documentar y probar roles & 6 & Alumno & 0\% \\
+8 & HU7 & Módulo multi-tenant (opcional) & 8 & Alumno & 0\% \\
+8 & \textit{---} & Reuniones / buffer & 8 & Alumno & 0\% \\
+\hline
+\multicolumn{6}{|c|}{\textbf{Sprint 9 (40 h aprox.) -- HU8: Historial y auditoría}} \\
+\hline
+9 & HU8 & Esquema BD de logs y filtros & 10 & Alumno & 0\% \\
+9 & HU8 & Indexar y optimizar (<5s) & 10 & Alumno & 0\% \\
+9 & HU8 & Documentar y pruebas finales & 6 & Alumno & 0\% \\
+9 & HU8 & Exportar historial (opcional) & 4 & Alumno & 0\% \\
+9 & \textit{---} & Reuniones / buffer & 10 & Alumno & 0\% \\
+\hline
+\multicolumn{6}{|c|}{\textbf{Sprint 10 (62 h aprox.) -- Integración total y cierre}} \\
+\hline
+10 & Integración & Configurar entorno end-to-end & 8 & Alumno & 0\% \\
+10 & Integración & Pruebas de integración global & 20 & Alumno & 0\% \\
+10 & Integración & Depuración / resolución de incompatibilidades & 16 & Alumno & 0\% \\
+10 & Integración & Informe QA y mejoras finales & 10 & Alumno & 0\% \\
+10 & PG3 & Finalizar memoria (ajustes) & 6 & Alumno & 0\% \\
+10 & PG4 & Preparar defensa (repaso final) & 2 & Alumno & 0\% \\
+\hline
+\end{tabular}
+\end{center}
+\noindent
+\textbf{Notas:}
+\begin{itemize}
+  \item Los sprints se planifican con una duración aproximada de 2 semanas cada uno. 
+  \item Cada fila incluye una tarea, la cantidad de horas estimadas, el responsable (en este caso, el propio alumno) y el \% de completado (que se actualiza a medida que avanza el proyecto).
+  \item Las tareas de planificación (PG1--PG5) se distribuyen en distintos sprints según convenga, aunque algunas (como la elaboración de la memoria) se realizan en paralelo.
+  \item Se estima un total de 600 horas. La tabla resume el desglose de horas por sprint, cumpliendo con el objetivo de 480--500 horas para tareas técnicas y 100--120 horas para las no técnicas.
+\end{itemize}
+
+\section{12. Normativa y cumplimiento de datos (gobernanza)}
+
+El presente proyecto, al involucrar la captura, almacenamiento y procesamiento de imágenes tomadas desde una locomotora en movimiento, requiere una evaluación exhaustiva en términos de gobernanza de datos. Aunque los datos recolectados no contienen información personal, es fundamental considerar aspectos legales, éticos y de calidad en su gestión.
+
+Durante la clase se discutió el concepto de \textbf{gobernanza de datos} como un enfoque integral que busca asegurar que los datos sean \textit{precisos, consistentes, accesibles, seguros y utilizables}. En ese sentido, se remarcó que la gobernanza no se limita a la gestión técnica de los datos, sino que abarca la definición de \textbf{roles, políticas, normas y procedimientos} que rigen su uso.
+
+En este contexto, se contemplan los siguientes puntos clave:
+
+\begin{itemize}
+    \item \textbf{Legalidad:} los datos no contienen información personal ni sensible, por lo cual no están directamente alcanzados por la Ley 25.326 de Protección de Datos Personales en Argentina. Sin embargo, se mantendrá un enfoque preventivo para garantizar el cumplimiento de dicha normativa si eventualmente se incorporan datos que sí lo estén.
+    
+    \item \textbf{Trazabilidad y transparencia:} se han definido historias de usuario específicas (como HU8) que garantizan el registro de accesos y modificaciones sobre los datos, asegurando así la trazabilidad y auditabilidad del sistema.
+    
+    \item \textbf{Acceso y roles:} se establecieron mecanismos para la gestión de usuarios y permisos (HU7), en línea con los principios de mínima exposición y necesidad de saber.
+    
+    \item \textbf{Almacenamiento seguro:} las imágenes serán almacenadas en repositorios controlados, con verificación de integridad y mecanismos de control de acceso.
+    
+    \item \textbf{Ética y uso responsable:} aunque las imágenes no identifican personas, el proyecto adopta principios de ética en IA, evitando el uso no autorizado o descontextualizado de los datos. La gobernanza también implica mantener una comunicación clara con las organizaciones involucradas, en este caso Trenes Argentinos.
+\end{itemize}
+
+En resumen, el enfoque de gobernanza de datos aplicado en este proyecto no solo considera el cumplimiento normativo, sino que lo amplía con buenas prácticas de calidad, trazabilidad y responsabilidad ética, asegurando que los datos sean utilizados de forma confiable, segura y justificada.
+
+\section{13. Gestión de riesgos}
+\label{sec:riesgos}
+
+\begin{consigna}{red}
+a) Identificación de los riesgos (al menos cinco) y estimación de sus consecuencias:
+ 
+Riesgo 1: detallar el riesgo (riesgo es algo que si ocurre altera los planes previstos de forma negativa)
+\begin{itemize}
+	\item Severidad (S): mientras más severo, más alto es el número (usar números del 1 al 10).\\
+	Justificar el motivo por el cual se asigna determinado número de severidad (S).
+	\item Probabilidad de ocurrencia (O): mientras más probable, más alto es el número (usar del 1 al 10).\\
+	Justificar el motivo por el cual se asigna determinado número de (O). 
+\end{itemize}   
+
+Riesgo 2:
+\begin{itemize}
+	\item Severidad (S): X.\\
+	Justificación...
+	\item Ocurrencia (O): Y.\\
+	Justificación...
+\end{itemize}
+
+Riesgo 3:
+\begin{itemize}
+	\item Severidad (S):  X.\\
+	Justificación...
+	\item Ocurrencia (O): Y.\\
+	Justificación...
+\end{itemize}
+
+
+b) Tabla de gestión de riesgos:      (El RPN se calcula como RPN=SxO)
+
+\begin{table}[htpb]
+\centering
+\begin{tabularx}{\linewidth}{@{}|X|c|c|c|c|c|c|@{}}
+\hline
+\rowcolor[HTML]{C0C0C0} 
+Riesgo & S & O & RPN & S* & O* & RPN* \\ \hline
+       &   &   &     &    &    &      \\ \hline
+       &   &   &     &    &    &      \\ \hline
+       &   &   &     &    &    &      \\ \hline
+       &   &   &     &    &    &      \\ \hline
+       &   &   &     &    &    &      \\ \hline
+\end{tabularx}%
+\end{table}
+
+Criterio adoptado: 
+
+Se tomarán medidas de mitigación en los riesgos cuyos números de RPN sean mayores a...
+
+Nota: los valores marcados con (*) en la tabla corresponden luego de haber aplicado la mitigación.
+
+c) Plan de mitigación de los riesgos que originalmente excedían el RPN máximo establecido:
+ 
+Riesgo 1: plan de mitigación (si por el RPN fuera necesario elaborar un plan de mitigación).
+  Nueva asignación de S y O, con su respectiva justificación:
+  \begin{itemize}
+	\item Severidad (S*): mientras más severo, más alto es el número (usar números del 1 al 10).
+          Justificar el motivo por el cual se asigna determinado número de severidad (S).
+	\item Probabilidad de ocurrencia (O*): mientras más probable, más alto es el número (usar del 1 al 10).
+          Justificar el motivo por el cual se asigna determinado número de (O).
+	\end{itemize}
+
+Riesgo 2: plan de mitigación (si por el RPN fuera necesario elaborar un plan de mitigación).
+ 
+Riesgo 3: plan de mitigación (si por el RPN fuera necesario elaborar un plan de mitigación).
+
+\end{consigna}
+
+
+\section{14. Gestión de la calidad}
+\label{sec:calidad}
+
+\begin{consigna}{red}
+Elija al menos diez requerimientos que a su criterio sean los más importantes/críticos/que aportan más valor y para cada uno de ellos indique las acciones de verificación y validación que permitan asegurar su cumplimiento.
+
+\begin{itemize} 
+\item Req \#1: copiar acá el requerimiento con su correspondiente número.
+
+\begin{itemize}
+	\item Verificación para confirmar si se cumplió con lo requerido antes de mostrar el sistema al cliente. Detallar.
+	\item Validación con el cliente para confirmar que está de acuerdo en que se cumplió con lo requerido. Detallar. 
+\end{itemize}
+
+\end{itemize}
+
+Tener en cuenta que en este contexto se pueden mencionar simulaciones, cálculos, revisión de hojas de datos, consulta con expertos, mediciones, etc.  
+
+Las acciones de verificación suelen considerar al entregable como ``caja blanca'', es decir se conoce en profundidad su funcionamiento interno.  
+
+En cambio, las acciones de validación suelen considerar al entregable como ``caja negra'', es decir, que no se conocen los detalles de su funcionamiento interno.
+
+\end{consigna}
+
+\section{15. Procesos de cierre}    
+\label{sec:cierre}
+
+\begin{consigna}{red}
+Establecer las pautas de trabajo para realizar una reunión final de evaluación del proyecto, tal que contemple las siguientes actividades:
+
+\begin{itemize}
+	\item Pautas de trabajo que se seguirán para analizar si se respetó el Plan de Proyecto original:\\
+	 - Indicar quién se ocupará de hacer esto y cuál será el procedimiento a aplicar. 
+	\item Identificación de las técnicas y procedimientos útiles e inútiles que se emplearon, los problemas que surgieron y cómo se solucionaron:\\
+	 - Indicar quién se ocupará de hacer esto y cuál será el procedimiento para dejar registro.
+	\item Indicar quién organizará el acto de agradecimiento a todos los interesados, y en especial al equipo de trabajo y colaboradores:\\
+	  - Indicar esto y quién financiará los gastos correspondientes.
+\end{itemize}
+
+\end{consigna}
+
+\end{document}
